@@ -3,21 +3,50 @@ version: "3.7"
 services:
 
   # Define our individual services
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    command: mongod --storageEngine=wiredTiger
+    # Username and password user for local development. Change to something suitable for production
+    # Be sure to update __init__.py located in /flask/app when you change the username & password
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: Dashboard
+    
+    #expose:
+      #- 27017
 
-  flask:
+    ports:
+      - "27017:27017"
+
+    #storage:
+      #engine: inMemory
+    
+      # Specify a local volume to store the db data & logging info
+    volumes:
+      - "~/container_volumes/mongo/data/db:/data/db"
+      - "~/container_logs/mongo/log:/var/log/mongodb"
+    # If using a GCP VM. Log to stackdriver
+    # logging:
+    #   driver: gcplogs
+
+
+  vizi:
 
     # Build the flask service using the Dockerfile in the flask directory
-    build: ./flask
+    build: ./vizi
 
     # Give our flask container a friendly name
-    container_name: flask
+    container_name: vizi
 
     # Instruct Docker to always restart the service
     restart: always
 
     # Use environment to set any environment variables
-    environment:
-      - APP_NAME=MyFlaskApp
+    #environment:
+      #- APP_NAME=MyFlaskApp
 
     # Any ports listed using `expose` will only be accessible to internal services/containers
     # uWSGI will be serving our Flask application on port 8080
@@ -29,6 +58,9 @@ services:
     # Just make sure the directory exists before running docker-compose up --build
     volumes:
       - ./log/uwsgi:/var/log/uwsgi
+
+    stdin_open: true
+    tty: true
 
   nginx:
 
