@@ -1,14 +1,51 @@
 from . import blueprint
 from flask import render_template, current_app, request, redirect
 from flask_login import login_required, current_user
-from .forms import add_user_Form, delete_user_Form, change_password_Form, setting_password_Form
-from ..base.models import User
+from flask_user import roles_required
+from .forms import add_user_Form, delete_user_Form, change_password_Form, setting_password_Form, add_role_Form
+from ..base.models import User, Role
+
+@blueprint.route('/view_roles', methods=['GET', 'POST'])
+@login_required
+def view_Roles():
+    admin_user = current_app.config['ADMIN']['username']
+    if current_user.username == admin_user: 
+        form = add_role_Form(request.form)
+        if 'View_Roles' in request.form:
+            role = Role.query.filter_by(name=request.form['rolename']).first()
+            if role :
+                status = 'Role is existing'
+            else:
+                Role(**request.form).add_to_db()
+                status = 'Add role success!'
+            return render_template('add_role.html', form = form, status = status)
+        return render_template('add_role.html', form = form, status = '')
+    return redirect('/page_403')
+
+
+@blueprint.route('/add_role', methods=['GET', 'POST'])
+@login_required
+def add_Role():
+    admin_user = current_app.config['ADMIN']['username']
+    if current_user.username == admin_user: 
+        form = add_role_Form(request.form)
+        if 'Add_Role' in request.form:
+            role = Role.query.filter_by(name=request.form['rolename']).first()
+            if role :
+                status = 'Role is existing'
+            else:
+                Role(**request.form).add_to_db()
+                status = 'Add role success!'
+            return render_template('add_role.html', form = form, status = status)
+        return render_template('add_role.html', form = form, status = '')
+    return redirect('/page_403')
+
 
 @blueprint.route('/add_user', methods=['GET', 'POST'])
 @login_required
 def add_User():
     admin_user = current_app.config['ADMIN']['username']
-    if current_user.username == admin_user: 
+    if current_user.username == admin_user or current_user.rolename == 'admin': 
         form = add_user_Form(request.form)
         if 'Add' in request.form:
             user = User.query.filter_by(username=request.form['username']).first()
@@ -19,7 +56,8 @@ def add_User():
                 status = 'Email is existing'
             else:
                 User(**request.form).add_to_db()
-                status = 'Add user success !'
+                status = 'Add user success!'
+
             return render_template('add_user.html', form = form, status = status)
         return render_template('add_user.html', form = form, status = '')
     return redirect('/page_403')

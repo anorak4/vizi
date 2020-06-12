@@ -3,11 +3,16 @@ from wtforms import TextField, PasswordField
 
 ## login and registration
 
+class add_role_Form(FlaskForm):
+    rolename = TextField('Rolename', id='rolename_create')
+    roledesc = TextField('Roledesc')
 
 class add_user_Form(FlaskForm):
     username = TextField('Username', id='username_create')
     email = TextField('Email')
+    rolename = TextField('Rolename')
     password = PasswordField('Password', id='pwd_create')
+
 
 class delete_user_Form(FlaskForm):
     username = TextField('Username', id='username_delete')

@@ -23,7 +23,7 @@
 
         <li><a href="/home"><i class="fa fa-home"></i> Home <span></span></a></li>
 
-        <li><a><i class="fa fa-bar-chart-o"></i> DashExample <span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-bar-chart-o"></i> Dashboard <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             {% for link in nav %}
               <li><a href="{{ link.url }}">{{ link.name }}</a></li>
@@ -33,8 +33,9 @@
         
         <li><a><i class="fa fa-cog"></i> Setting <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            {% if Is_admin %}
+            {% if Is_admin or current_user.rolename == 'admin' %}
               <li><a href="/setting/add_user">Add User</a></li>
+              <li><a href="/setting/add_role">Add Role</a></li>
               <li><a href="/setting/delete_user">Delete User</a></li>
               <li><a href="/setting/setting_password">Setting User Password</a></li>
             {% else %}
