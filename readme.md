@@ -1,10 +1,6 @@
-### Simple Flask app running behind Nginx & uWSGI in a Docker container
+### Flask app running behind Nginx & uWSGI in a Docker container
 
 Clone the repo:
-
-```sh
-git clone https://github.com/Julian-Nash/docker-flask-uwsgi-nginx-simple.git
-```
 
 To develop locally, create a new virtual env in the `flask` directory & run the app:
 
